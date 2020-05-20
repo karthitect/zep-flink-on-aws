@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::072006118350:role/s3-fullaccess   
+  creationTimestamp: "2020-05-11T19:30:28Z"
+  name: zep-flink-eks-kt-svcacct
+  namespace: default
+  resourceVersion: "402411"
+  selfLink: /api/v1/namespaces/default/serviceaccounts/zep-flink-eks-kt-svcacct
+  uid: 339f2690-9320-4727-b23f-829b1e8c0c6d
+secrets:
+- name: zep-flink-eks-kt-svcacct-token-w9f2m

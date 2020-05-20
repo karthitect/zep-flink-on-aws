@@ -1,0 +1,22 @@
+FROM flink:1.10.1-scala_2.11
+
+USER root
+
+RUN apt-get update && apt-get install -y netcat
+RUN apt-get update && apt-get install -y telnet
+RUN apt-get update && apt-get install -y vim
+RUN apt-get update && apt-get install -y procps
+
+# RUN wget -O /opt/flink/lib/flink-shaded-hadoop-2-2.8.3-10.0.jar https://repo1.maven.org/maven2/org/apache/flink/flink-shaded-hadoop-2/2.8.3-10.0/flink-shaded-hadoop-2-2.8.3-10.0.jar
+RUN wget -O /opt/flink/lib/flink-shaded-hadoop-2-uber-2.8.3-10.0.jar https://repo1.maven.org/maven2/org/apache/flink/flink-shaded-hadoop-2-uber/2.8.3-10.0/flink-shaded-hadoop-2-uber-2.8.3-10.0.jar
+# RUN mkdir -p /opt/flink/plugins/s3-fs-presto/
+# RUN cp /opt/flink/opt/flink-s3-fs-presto-1.10.1.jar /opt/flink/plugins/s3-fs-presto/
+RUN mkdir -p /opt/flink/plugins/s3-fs-hadoop/
+RUN cp /opt/flink/opt/flink-s3-fs-hadoop-1.10.1.jar /opt/flink/plugins/s3-fs-hadoop/
+
+RUN wget -O /opt/awscliv2.zip https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+RUN cd /opt/ && unzip awscliv2.zip
+RUN cd /opt && ./aws/install
+
+COPY interpreter-setting.json /zeppelin/interpreter/flink/
+COPY flink-conf.yaml /opt/flink/conf/

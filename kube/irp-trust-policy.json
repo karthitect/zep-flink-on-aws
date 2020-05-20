@@ -1,0 +1,17 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::072006118350:oidc-provider/oidc.eks.us-east-2.amazonaws.com/id/63159364BDCF1111DAFAFA8F9DA63411"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "oidc.eks.us-east-2.amazonaws.com/id/63159364BDCF1111DAFAFA8F9DA63411:sub": "system:serviceaccount:default:zep-flink-eks-kt-svcacct"
+        }
+      }
+    }
+  ]
+}

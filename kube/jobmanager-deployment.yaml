@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flink-jobmanager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flink
+      component: jobmanager
+  template:
+    metadata:
+      labels:
+        app: flink
+        component: jobmanager
+    spec:
+      serviceAccountName: zep-flink-eks-kt-svcacct
+      containers:
+      - name: jobmanager
+        image: docker.io/kthyagar/ktflink
+        workingDir: /opt/flink
+        command: ["/bin/bash", "-c", "$FLINK_HOME/bin/jobmanager.sh start;\
+          while :;
+          do
+            if [[ -f $(find log -name '*jobmanager*.log' -print -quit) ]];
+              then tail -f -n +1 log/*jobmanager*.log;
+            fi;
+          done"]
+        env:
+        - name: blahblah
+          value: blahblah
+        - name: blahblah
+          value: blahblah
+        ports:
+        - containerPort: 6123
+          name: rpc
+        - containerPort: 6124
+          name: blob
+        - containerPort: 8081
+          hostPort: 8081
+          name: ui
+        livenessProbe:
+          tcpSocket:
+            port: 6123
+          initialDelaySeconds: 30
+          periodSeconds: 60
+        volumeMounts:
+        - name: flink-config-volume
+          mountPath: /opt/flink/conf
+        securityContext:
+          # runAsUser: 9999  # refers to user _flink_ from official flink image, change if necessary
+          runAsUser: 0
+      volumes:
+      - name: flink-config-volume
+        configMap:
+          name: flink-config
+          items:
+          - key: flink-conf.yaml
+            path: flink-conf.yaml
+          - key: log4j.properties
+            path: log4j.properties

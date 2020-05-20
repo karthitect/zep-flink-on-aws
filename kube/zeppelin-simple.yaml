@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flink-zeppelin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flink
+      component: zeppelin
+  template:
+    metadata:
+      labels:
+        app: flink
+        component: zeppelin
+    spec:
+      serviceAccountName: zep-flink-eks-kt-svcacct
+      containers:
+      - name: zeppelin
+        image: docker.io/kthyagar/ktflinkzep
+        env:
+        - name: ZEPPELIN_HOME
+          value: "/zeppelin"
+        - name: ZEPPELIN_RUN_MODE
+          value: local
+        - name: blahblah
+          value: blahblah
+        - name: blahblah
+          value: blahblah
+        ports:
+        - name: http
+          containerPort: 8080
+          hostPort: 8080
+        - name: https
+          containerPort: 8443
+        - name: rpc
+          containerPort: 12320
+        volumeMounts:
+          - mountPath: "/stuff"
+            name: stuff
+          # - name: flinkconfig
+          #   mountPath: /zeppelin/interpreter/flink/
+      # initContainers:
+      #   - name: downloadflink
+      #     image: busybox
+      #     command:
+      #     - wget
+      #     - "-O"
+      #     - "/stuff/flink-1.10.1-bin-scala_2.11.tgz"
+      #     - "http://apache.mirrors.pair.com/flink/flink-1.10.1/flink-1.10.1-bin-scala_2.11.tgz"
+      #     volumeMounts:
+      #     - name: stuff
+      #       mountPath: "/stuff"
+      #   - name: extractflink
+      #     image: busybox
+      #     command:
+      #     - tar
+      #     - "-xvzf"
+      #     - "/stuff/flink-1.10.1-bin-scala_2.11.tgz"
+      #     - "-C"
+      #     - "/stuff/"
+      #     volumeMounts:
+      #     - name: stuff
+      #       mountPath: "/stuff"
+      #     - name: flinkconfig
+      #       mountPath: /zeppelin/interpreter/flink
+      #   - name: downloadflinkhadoop
+      #     image: busybox
+      #     command:
+      #     - wget
+      #     - "-O"
+      #     - "/stuff/flink-1.10.1/lib/flink-shaded-hadoop-2-2.8.3-10.0.jar"
+      #     - https://repo1.maven.org/maven2/org/apache/flink/flink-shaded-hadoop-2/2.8.3-10.0/flink-shaded-hadoop-2-2.8.3-10.0.jar
+      #     volumeMounts:
+      #     - name: stuff
+      #       mountPath: "/stuff"
+      #   - name: downloadflinks3presto
+      #     image: busybox
+      #     command:
+      #     - wget
+      #     - "-O"
+      #     - "/stuff/flink-1.10.1/lib/flink-s3-fs-presto-1.10.1.jar"
+      #     - https://repo1.maven.org/maven2/org/apache/flink/flink-s3-fs-presto/1.10.1/flink-s3-fs-presto-1.10.1.jar
+      #     volumeMounts:
+      #     - name: stuff
+      #       mountPath: "/stuff"
+      #   - name: downloadflinks3hadoop
+      #     image: busybox
+      #     command:
+      #     - wget
+      #     - "-O"
+      #     - "/stuff/flink-1.10.1/lib/flink-s3-fs-hadoop-1.10.1.jar"
+      #     - https://repo1.maven.org/maven2/org/apache/flink/flink-s3-fs-hadoop/1.10.1/flink-s3-fs-hadoop-1.10.1.jar
+      #     volumeMounts:
+      #     - name: stuff
+      #       mountPath: "/stuff"
+      #   - name: cpflinks3prestoplugin
+      #     image: busybox
+      #     command:
+      #     - cp
+      #     - "/stuff/flink-1.10.1/lib/flink-s3-fs-presto-1.10.1.jar"
+      #     - "/stuff/flink-1.10.1/plugins/"
+      #     volumeMounts:
+      #     - name: stuff
+      #       mountPath: "/stuff"
+      #   - name: cpflinks3hadoopplugin
+      #     image: busybox
+      #     command:
+      #     - cp
+      #     - "/stuff/flink-1.10.1/lib/flink-s3-fs-hadoop-1.10.1.jar"
+      #     - "/stuff/flink-1.10.1/plugins/"
+      #     volumeMounts:
+      #     - name: stuff
+      #       mountPath: "/stuff"
+      volumes:
+      - name: stuff
+        persistentVolumeClaim:
+          claimName: ebs-claim
+      - name: flinkconfig
+        configMap:
+          # Note the following needs to be retrieved from kubectl get configmap
+          name: zeppelin-flink-interpreter-config-dgdhtcgg95
+          items:
+          - key: flink-interpreter-setting.json
+            path: interpreter-setting.json
