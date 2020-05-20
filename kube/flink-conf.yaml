@@ -255,6 +255,7 @@ jobmanager.execution.failover-strategy: region
 # Hive
 #==============================================================================
 
-hive.s3.use-instance-credentials: true
+# https://github.com/apache/flink/pull/9071
+fs.s3a.aws.credentials.provider: com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 
 # fs.s3a.aws.credentials.provider: com.amazonaws.auth.InstanceProfileCredentialsProvider

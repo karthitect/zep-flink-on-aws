@@ -13,6 +13,8 @@ spec:
       labels:
         app: flink
         component: jobmanager
+      annotations:
+        iam.amazonaws.com/role: s3-fullaccess
     spec:
       serviceAccountName: zep-flink-eks-kt-svcacct
       containers:

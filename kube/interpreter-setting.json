@@ -29,21 +29,21 @@
       "flink.execution.mode": {
         "envName": null,
         "propertyName": null,
-        "defaultValue": "local",
+        "defaultValue": "remote",
         "description": "Execution mode, it could be local|remote|yarn",
         "type": "string"
       },
       "flink.execution.remote.host": {
         "envName": null,
         "propertyName": null,
-        "defaultValue": "",
+        "defaultValue": "flink-jobmanager",
         "description": "Host name of running JobManager. Only used for remote mode",
         "type": "string"
       },
       "flink.execution.remote.port": {
         "envName": null,
         "propertyName": null,
-        "defaultValue": "",
+        "defaultValue": "8081",
         "description": "Port of running JobManager. Only used for remote mode",
         "type": "number"
       },
@@ -113,7 +113,7 @@
       "flink.execution.packages": {
         "envName": null,
         "propertyName": null,
-        "defaultValue": "",
+        "defaultValue": "joda-time:joda-time:2.5,com.fasterxml.jackson.core:jackson-core:2.10.1,com.fasterxml.jackson.core:jackson-annotations:2.10.1,com.fasterxml.jackson.core:jackson-databind:2.10.1,software.amazon.awssdk:kinesis:2.13.19,software.amazon.awssdk:sts:2.13.19,org.apache.flink:flink-connector-kinesis_2.11:1.10.1",
         "description": "Additional user packages (comma separated), e.g. flink connector packages",
         "type": "string"
       },

@@ -1,3 +1,12 @@
+### NOTE
+
+This deployment depends on two custom (public) Docker images:
+
+1. docker.io/kthyagar/ktflink (Flink; see Dockerfile-flink)
+2. docker.io/kthyagar/ktflinkzep (Zeppelin w/ embedded Flink; see Dockerfile-zep)
+
+WARNING: These Docker images, and this entire deployment, is for illustration purposes only. Not for production use.
+
 ### Deploy flink
 
 ```
@@ -29,31 +38,23 @@ kubectl apply -f storageClass.yaml
 kubectl apply -f ebs-claim.yaml
 ```
 
-### Apply config map
+### install uswitch/kiam
+NOTE: This is a stop-gap solution until the Flink Kinesis Connector supports WebIdentityTokenCredentialsProvider
+
+https://github.com/uswitch/kiam
+
+https://hub.helm.sh/charts/uswitch/kiam
 
 ```
-kubectl kustomize  | kubectl apply -f -
+helm install uswitch/kiam --generate-name --set agent.host.iptables=true
 ```
 
-### Deploy zeppelin
-```
-kubectl apply -f zeppelin-simple.yaml
-```
+More information on setting up kiam: https://medium.com/@SreedharBukya/working-with-kiam-roles-in-kubernetes-1b16cf0e6b85
 
-### Copy interpreter settings to pod
-```
-kubectl cp --no-preserve=true ./flink-interpreter-setting.json [podname]:/zeppelin/interpreter/flink/interpreter-setting.json
-```
+### install namespace annotation for kiam
 
-### Use [kubectl port forwarding](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/) to access Flink UI and Zeppelin UI
-Flink:
 ```
-kubectl port-forward [podname] 81:8081
-```
-
-Zeppelin:
-```
-kubectl port-forward [podname] 82:8080
+kubectl apply -f kiam.namespace.default.yaml
 ```
 
 ### Configure your EKS cluster with [fine-grained access control](https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/)
@@ -71,4 +72,21 @@ eksctl create iamserviceaccount \
                 --cluster [Your cluster] \
                 --attach-policy-arn arn:aws:iam::aws:policy/AmazonKinesisFullAccess \
                 --approve
+```
+
+
+### Deploy zeppelin
+```
+kubectl apply -f zeppelin-simple.yaml
+```
+
+### Use [kubectl port forwarding](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/) to access Flink UI and Zeppelin UI
+Flink:
+```
+kubectl port-forward [flink jobmanager podname] 81:8082
+```
+
+Zeppelin:
+```
+kubectl port-forward [zeppelin podname] 80:8081
 ```

@@ -1,0 +1,37 @@
+%flink
+import org.apache.flink.table.api.scala.StreamTableEnvironment
+import org.apache.flink.table.api.Table
+import org.apache.flink.streaming.api.scala.DataStream
+import org.apache.flink.streaming.connectors.kinesis.FlinkKinesisConsumer
+import org.apache.flink.streaming.connectors.kinesis.config.AWSConfigConstants
+import org.apache.flink.streaming.connectors.kinesis.config.ConsumerConfigConstants
+import org.apache.flink.api.common.serialization.SimpleStringSchema
+import java.util.Properties
+
+// get TableEnvironment
+// registration of a DataSet is equivalent
+val tableEnv: StreamTableEnvironment = StreamTableEnvironment.create(senv)
+val kinesisConsumerConfig: Properties = new Properties
+
+kinesisConsumerConfig.setProperty(AWSConfigConstants.AWS_REGION, "us-east-2")
+kinesisConsumerConfig.setProperty(AWSConfigConstants.AWS_CREDENTIALS_PROVIDER, "AUTO")
+kinesisConsumerConfig.put(ConsumerConfigConstants.STREAM_INITIAL_POSITION, "LATEST")
+kinesisConsumerConfig.put(ConsumerConfigConstants.SHARD_GETRECORDS_RETRIES, "10")
+val dataStream: DataStream[String] = senv.addSource(new FlinkKinesisConsumer("KDAScalingTestStream", new SimpleStringSchema, kinesisConsumerConfig))
+val dataStream2: DataStream[(Long, Long, String, String)] = dataStream.map {
+   str => {
+      val splitEntries = str.split(",")
+      val companyIdEntries = splitEntries(0).split(":")
+      val empIdEntries = splitEntries(1).split(":")
+      val nameEntries = splitEntries(2).replace("\"", "").split(":")
+      val dobEntries = splitEntries(3).replace("\"", "").replace("}", "").split(":")
+
+     (companyIdEntries(1).trim().toLong, empIdEntries(1).trim().toLong, nameEntries(1), dobEntries(1))
+}}
+
+//stenv.dropTemporaryView("kinTable1")
+stenv.createTemporaryView("kinTable1", dataStream2, 'CompanyId, 'EmployeeId, 'Name, 'DOB, 'user_action_time.proctime)
+
+
+%flink.ssql(type=update, refreshInterval=2000, parallelism=1)
+select * from kinTable1 order by Name asc limit 5;"

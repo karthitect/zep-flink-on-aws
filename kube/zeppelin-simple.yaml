@@ -13,8 +13,14 @@ spec:
       labels:
         app: flink
         component: zeppelin
+      annotations:
+        iam.amazonaws.com/role: s3-fullaccess
     spec:
       serviceAccountName: zep-flink-eks-kt-svcacct
+      # the below is needed to give the container access
+      # to the service token file
+      securityContext:
+        fsGroup: 65534
       containers:
       - name: zeppelin
         image: docker.io/kthyagar/ktflinkzep
