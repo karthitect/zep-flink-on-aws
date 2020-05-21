@@ -1,0 +1,18 @@
+%flink.pyflink
+
+my_source_ddl = """
+    create table bankTable (
+        word VARCHAR
+    ) with (
+        'connector.type' = 'filesystem',
+        'format.type' = 'csv',
+        'connector.path' = 's3://ktohio/bank.csv'
+    )
+"""
+
+bt_env.sql_update(my_source_ddl)
+
+# different paragraph
+%flink.bsql
+
+select * from bankTable limit 10;

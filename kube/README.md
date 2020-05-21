@@ -38,40 +38,18 @@ kubectl apply -f storageClass.yaml
 kubectl apply -f ebs-claim.yaml
 ```
 
-### install uswitch/kiam
-NOTE: This is a stop-gap solution until the Flink Kinesis Connector supports WebIdentityTokenCredentialsProvider
-
-https://github.com/uswitch/kiam
-
-https://hub.helm.sh/charts/uswitch/kiam
-
-```
-helm install uswitch/kiam --generate-name --set agent.host.iptables=true
-```
-
-More information on setting up kiam: https://medium.com/@SreedharBukya/working-with-kiam-roles-in-kubernetes-1b16cf0e6b85
-
-### install namespace annotation for kiam
-
-```
-kubectl apply -f kiam.namespace.default.yaml
-```
-
 ### Configure your EKS cluster with [fine-grained access control](https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/)
+NOTE: This is not essential because we'll be using the node role to talk to Kinesis and S3. In the future, once support arrives in the Flink Kinesis Connector
+and the Zeppelin container to handle WebIdentityCredentials, we'll switch to leveraging this IRSA setup
+
 ```
 eksctl utils associate-iam-oidc-provider \
                --name [Your cluster] \
                --approve
 ```
 
-Give the role access to write to Kinesis
 ```
-eksctl create iamserviceaccount \
-                --name [Name for service account] \
-                --namespace default \
-                --cluster [Your cluster] \
-                --attach-policy-arn arn:aws:iam::aws:policy/AmazonKinesisFullAccess \
-                --approve
+... follow instructions in the blog to configure pod creds
 ```
 
 

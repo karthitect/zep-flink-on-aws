@@ -33,5 +33,6 @@ val dataStream2: DataStream[(Long, Long, String, String)] = dataStream.map {
 stenv.createTemporaryView("kinTable1", dataStream2, 'CompanyId, 'EmployeeId, 'Name, 'DOB, 'user_action_time.proctime)
 
 
+# different paragraph
 %flink.ssql(type=update, refreshInterval=2000, parallelism=1)
 select * from kinTable1 order by Name asc limit 5;"

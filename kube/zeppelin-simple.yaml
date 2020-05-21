@@ -13,8 +13,6 @@ spec:
       labels:
         app: flink
         component: zeppelin
-      annotations:
-        iam.amazonaws.com/role: s3-fullaccess
     spec:
       serviceAccountName: zep-flink-eks-kt-svcacct
       # the below is needed to give the container access
@@ -44,80 +42,6 @@ spec:
         volumeMounts:
           - mountPath: "/stuff"
             name: stuff
-          # - name: flinkconfig
-          #   mountPath: /zeppelin/interpreter/flink/
-      # initContainers:
-      #   - name: downloadflink
-      #     image: busybox
-      #     command:
-      #     - wget
-      #     - "-O"
-      #     - "/stuff/flink-1.10.1-bin-scala_2.11.tgz"
-      #     - "http://apache.mirrors.pair.com/flink/flink-1.10.1/flink-1.10.1-bin-scala_2.11.tgz"
-      #     volumeMounts:
-      #     - name: stuff
-      #       mountPath: "/stuff"
-      #   - name: extractflink
-      #     image: busybox
-      #     command:
-      #     - tar
-      #     - "-xvzf"
-      #     - "/stuff/flink-1.10.1-bin-scala_2.11.tgz"
-      #     - "-C"
-      #     - "/stuff/"
-      #     volumeMounts:
-      #     - name: stuff
-      #       mountPath: "/stuff"
-      #     - name: flinkconfig
-      #       mountPath: /zeppelin/interpreter/flink
-      #   - name: downloadflinkhadoop
-      #     image: busybox
-      #     command:
-      #     - wget
-      #     - "-O"
-      #     - "/stuff/flink-1.10.1/lib/flink-shaded-hadoop-2-2.8.3-10.0.jar"
-      #     - https://repo1.maven.org/maven2/org/apache/flink/flink-shaded-hadoop-2/2.8.3-10.0/flink-shaded-hadoop-2-2.8.3-10.0.jar
-      #     volumeMounts:
-      #     - name: stuff
-      #       mountPath: "/stuff"
-      #   - name: downloadflinks3presto
-      #     image: busybox
-      #     command:
-      #     - wget
-      #     - "-O"
-      #     - "/stuff/flink-1.10.1/lib/flink-s3-fs-presto-1.10.1.jar"
-      #     - https://repo1.maven.org/maven2/org/apache/flink/flink-s3-fs-presto/1.10.1/flink-s3-fs-presto-1.10.1.jar
-      #     volumeMounts:
-      #     - name: stuff
-      #       mountPath: "/stuff"
-      #   - name: downloadflinks3hadoop
-      #     image: busybox
-      #     command:
-      #     - wget
-      #     - "-O"
-      #     - "/stuff/flink-1.10.1/lib/flink-s3-fs-hadoop-1.10.1.jar"
-      #     - https://repo1.maven.org/maven2/org/apache/flink/flink-s3-fs-hadoop/1.10.1/flink-s3-fs-hadoop-1.10.1.jar
-      #     volumeMounts:
-      #     - name: stuff
-      #       mountPath: "/stuff"
-      #   - name: cpflinks3prestoplugin
-      #     image: busybox
-      #     command:
-      #     - cp
-      #     - "/stuff/flink-1.10.1/lib/flink-s3-fs-presto-1.10.1.jar"
-      #     - "/stuff/flink-1.10.1/plugins/"
-      #     volumeMounts:
-      #     - name: stuff
-      #       mountPath: "/stuff"
-      #   - name: cpflinks3hadoopplugin
-      #     image: busybox
-      #     command:
-      #     - cp
-      #     - "/stuff/flink-1.10.1/lib/flink-s3-fs-hadoop-1.10.1.jar"
-      #     - "/stuff/flink-1.10.1/plugins/"
-      #     volumeMounts:
-      #     - name: stuff
-      #       mountPath: "/stuff"
       volumes:
       - name: stuff
         persistentVolumeClaim:
