@@ -7,5 +7,5 @@
 
 ## Deployment
 
-1. Deploy EKS Cluster
-2. Deploy Flink and Zeppelin
+1. [Deploy EKS Cluster](eks/README.md)
+2. [Deploy Flink and Zeppelin](kube/README.md)
