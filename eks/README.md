@@ -1,7 +1,7 @@
 ### Create VPC stack
 
 ```
-$ ./createvpcstack.h
+$ ./createvpcstack.sh
 ```
 
 ### Create EKS Cluster

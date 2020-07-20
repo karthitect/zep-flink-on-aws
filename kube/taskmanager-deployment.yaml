@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: flink-taskmanager
 spec:
+  progressDeadlineSeconds: 600
   replicas: 2
   selector:
     matchLabels:
