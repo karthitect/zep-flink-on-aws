@@ -10,6 +10,7 @@ WARNING: These Docker images, and this entire deployment, is for illustration pu
 ### Deploy flink
 
 ```
+kubectl create -f svc-acct.yaml
 kubectl create -f flink-configuration-configmap.yaml
 kubectl create -f jobmanager-service.yaml
 kubectl create -f jobmanager-deployment.yaml
@@ -20,6 +21,7 @@ kubectl create -f jobmanager-rest-service.yaml
 ### Teardown flink
 
 ```
+kubectl delete -f svc-acct.yaml
 kubectl delete -f jobmanager-rest-service.yaml
 kubectl delete -f taskmanager-deployment.yaml
 kubectl delete -f jobmanager-deployment.yaml
@@ -61,10 +63,10 @@ kubectl apply -f zeppelin-simple.yaml
 ### Use [kubectl port forwarding](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/) to access Flink UI and Zeppelin UI
 Flink:
 ```
-kubectl port-forward [flink jobmanager podname] 81:8082
+kubectl port-forward [flink jobmanager podname] 8081:8081
 ```
 
 Zeppelin:
 ```
-kubectl port-forward [zeppelin podname] 80:8081
+kubectl port-forward [zeppelin podname] 8080:8080
 ```
